@@ -1,0 +1,12 @@
+{
+  "title": "PhishGuard",
+  "scanning": "Scanning page...",
+  "host": "Host",
+  "blacklisted": "Blacklisted",
+  "suspicious": "Suspicious",
+  "confidence": "Confidence",
+  "report": "Report this URL",
+  "reported": "URL reported — thank you!",
+  "yes": "Yes",
+  "no": "No"
+}
