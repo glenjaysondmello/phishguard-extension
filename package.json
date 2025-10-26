@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && node ./scripts/copy-manifest-and-assets.js",
+    "build": "tsc && vite build && node ./scripts/copy-manifest-and-assets.cjs",
     "preview": "vite preview --port 5174",
     "lint": "eslint --ext .ts,.tsx src || true",
     "typecheck": "tsc --noEmit"

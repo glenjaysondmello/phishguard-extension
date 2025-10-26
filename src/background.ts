@@ -3,7 +3,8 @@
 
 const DEFAULT_BLACKLIST: string[] = [
   "example-phish.com",
-  "bad-login.example"
+  "bad-login.example",
+  "google.com"
 ];
 
 browser.runtime.onInstalled.addListener(async () => {
