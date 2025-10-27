@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const reportSchema = z.object({
   url: z.string().url(),
+  host: z.string(),
   pageTitle: z.string().max(512).optional(),
   userComment: z.string().max(1000).optional(),
   userAgent: z.string().max(512).optional(),
