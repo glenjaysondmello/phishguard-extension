@@ -4,6 +4,8 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import * as Sentry from "@sentry/node";
+
 import { initSentry } from './sentry';
 import { createReport, listReports } from "./controllers/reports";
 import {
@@ -24,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
   cors({
-    origin: [""],
+    origin: ["moz-extention://5aada905-217b-45d2-83d7-d591dad55b74", "http://localhost:3000"],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
   })
 );
@@ -70,8 +72,17 @@ app.delete(
   removeFromBlacklist
 );
 
+// SENTRY TEST ROUTE
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
+
 // static simple root
 app.get("/", (_req, res) => res.send("PhishGuard API"));
+
+// SENTRY'S ERROR HANDLER
+// app.use(Sentry.expressErrorHandler());
+Sentry.setupExpressErrorHandler(app);
 
 // Error handler last
 app.use(errorHandler);

@@ -3,7 +3,6 @@ import validator from "validator";
 import { reportSchema } from "../schemas/report.schema";
 import { ReportModel } from "../models/Report";
 import { extractHostname } from "../utils/logger";
-import { create } from "domain";
 
 export async function createReport(req: Request, res: Response) {
   try {
