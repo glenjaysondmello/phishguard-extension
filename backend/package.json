@@ -14,17 +14,22 @@
   "description": "",
   "dependencies": {
     "@sentry/node": "^10.22.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
     "validator": "^13.15.20",
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.1",
     "@types/validator": "^13.15.3",
     "@typescript-eslint/eslint-plugin": "^8.46.2",

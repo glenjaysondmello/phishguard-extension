@@ -7,14 +7,12 @@ import dotenv from "dotenv";
 import * as Sentry from "@sentry/node";
 
 import { initSentry } from './sentry';
-import { createReport, listReports } from "./controllers/reports";
-import {
-  addToBlacklist,
-  listBlacklist,
-  removeFromBlacklist,
-} from "./controllers/blacklist";
-import { adminApiKeyMiddleware } from "./middleware/authApiKey";
+
+// import { adminApiKeyMiddleware } from "./middleware/authApiKey";
 import { errorHandler } from "./middleware/errorHandler";
+import authRouter from "./routers/auth";
+import blacklistRouter from "./routers/blacklist";
+import reportRouter from "./routers/report";
 
 dotenv.config();
 initSentry();
@@ -59,18 +57,22 @@ mongoose
 // Routes
 app.get("/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
 
-// Public: reports endpoint (used by extension)
-app.post("/reports", createReport);
+// // Public: reports endpoint (used by extension)
+// app.post("/reports", createReport);
 
-// Admin routes (protected)
-app.get("/admin/reports", adminApiKeyMiddleware, listReports);
-app.post("/admin/blacklist", adminApiKeyMiddleware, addToBlacklist);
-app.get("/admin/blacklist", adminApiKeyMiddleware, listBlacklist);
-app.delete(
-  "/admin/blacklist/:domain",
-  adminApiKeyMiddleware,
-  removeFromBlacklist
-);
+// // Admin routes (protected)
+// app.get("/admin/reports", adminApiKeyMiddleware, listReports);
+// app.post("/admin/blacklist", adminApiKeyMiddleware, addToBlacklist);
+// app.get("/admin/blacklist", adminApiKeyMiddleware, listBlacklist);
+// app.delete(
+//   "/admin/blacklist/:domain",
+//   adminApiKeyMiddleware,
+//   removeFromBlacklist
+// );
+
+app.use("/auth", authRouter);
+app.use("/blacklist", blacklistRouter);
+app.use("/report", reportRouter);
 
 // SENTRY TEST ROUTE
 app.get("/debug-sentry", function mainHandler(req, res) {
