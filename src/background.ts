@@ -41,7 +41,7 @@ browser.runtime.onMessage.addListener(
         return false;
       }
 
-      axios.post("http://localhost:8080/reports", payload).then((res) => {
+      axios.post("http://localhost:8080/report", payload).then((res) => {
         console.log("Report submitted:", res.data);
         sendResponse({ ok: true, data: res.data });
       }).catch((err) => {

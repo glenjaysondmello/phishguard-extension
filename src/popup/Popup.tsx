@@ -46,7 +46,7 @@ export default function Popup() {
         }
       });
 
-      if (resp?.success) {
+      if (resp?.ok) {
         alert(t("report_success"));
       } else {
         alert(t("report_failure"));

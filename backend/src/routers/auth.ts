@@ -8,7 +8,6 @@ import {
 
 const authRouter = Router();
 
-// --- Auth Routes ---
 authRouter.post("/create-admin", createInitialAdmin);
 authRouter.post("/login", login);
 authRouter.post("/refresh", refresh);

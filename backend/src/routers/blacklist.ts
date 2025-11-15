@@ -8,9 +8,8 @@ import { requireAuth } from "../middleware/requireAuth";
 
 const blacklistRouter = Router();
 
-// --- Blacklist Routes ---
-blacklistRouter.get("/",requireAuth, listBlacklist);
-blacklistRouter.post("/",requireAuth, addToBlacklist);
-blacklistRouter.delete("/:domain",requireAuth,  removeFromBlacklist);
+blacklistRouter.get("/", requireAuth, listBlacklist);
+blacklistRouter.post("/", requireAuth, addToBlacklist);
+blacklistRouter.delete("/:domain", requireAuth, removeFromBlacklist);
 
 export default blacklistRouter;
