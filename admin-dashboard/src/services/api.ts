@@ -1,5 +1,5 @@
 import axios from "axios";
-import { store } from "../app/store";
+import {store} from "../app/store";
 import { logout, setCredentials } from "../features/authSlice";
 
 const API_BASE_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
