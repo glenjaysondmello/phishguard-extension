@@ -49,7 +49,7 @@ export const addBlacklistDomain = createAsyncThunk(
 
 export const removeBlacklistDomain = createAsyncThunk(
   "blacklist/removeBlacklistDomain",
-  async (domain, { rejectWithValue }) => {
+  async (domain: string, { rejectWithValue }) => {
     try {
       await api.delete(`/blacklist/${domain}`);
       return domain;

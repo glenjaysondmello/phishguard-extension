@@ -29,7 +29,7 @@ export const fetchReports = createAsyncThunk(
         status,
       });
 
-      const { data } = await api.get(`/reports?${params.toString()}`);
+      const { data } = await api.get(`/report?${params.toString()}`);
       return data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);

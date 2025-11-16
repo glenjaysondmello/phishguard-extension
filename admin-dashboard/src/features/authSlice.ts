@@ -9,7 +9,7 @@ const initialState = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (credentials, { rejectWithValue }) => {
+  async (credentials: {email: string, password: string}, { rejectWithValue }) => {
     try {
       const { data } = await api.post("/auth/login", credentials);
       return data;
