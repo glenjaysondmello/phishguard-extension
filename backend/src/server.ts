@@ -24,8 +24,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
   cors({
-    origin: ["moz-extention://5aada905-217b-45d2-83d7-d591dad55b74", "http://localhost:3000"],
+    origin: ["moz-extention://5aada905-217b-45d2-83d7-d591dad55b74", "http://localhost:5173"],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    credentials: true
   })
 );
 

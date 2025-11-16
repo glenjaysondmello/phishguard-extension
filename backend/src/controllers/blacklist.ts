@@ -4,6 +4,7 @@ import { BlacklistModel } from "../models/Blacklist";
 
 export async function addToBlacklist(req: Request, res: Response) {
   try {
+    const id = (req as any).adminId || null;
     const parsed = blacklistSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: parsed.error.flatten() });
@@ -13,7 +14,7 @@ export async function addToBlacklist(req: Request, res: Response) {
 
     const doc = await BlacklistModel.findOneAndUpdate(
       { domain },
-      { domain, reason, addedBy: null },
+      { domain, reason, addedBy: id },
       { upsert: true, new: true }
     );
 

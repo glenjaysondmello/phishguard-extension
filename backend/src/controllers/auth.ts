@@ -18,7 +18,7 @@ export const createInitialAdmin = async (req: Request, res: Response) => {
 
   try {
     const existingAdmin = await AdminModel.findOne({
-      email: email.token.toLowerCase(),
+      email: email.toLowerCase(),
     });
     if (existingAdmin) {
       return res.status(400).json({ error: "admin_already_exists" });
