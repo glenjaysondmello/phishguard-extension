@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../services/api";
+import api from "../services/api";
 
 const initialState = {
   accessToken: localStorage.getItem("accessToken") || null,
@@ -13,7 +13,7 @@ export const login = createAsyncThunk(
     try {
       const { data } = await api.post("/auth/login", credentials);
       return data;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
   }
@@ -25,7 +25,7 @@ export const logout = createAsyncThunk(
     try {
       await api.post("/auth/logout");
       return;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
   }
@@ -55,7 +55,7 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         localStorage.setItem("accessToken", action.payload.accessToken);
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action: any) => {
         state.status = "failed";
         state.error = action.payload.error || "Login failed";
       })
@@ -64,7 +64,7 @@ const authSlice = createSlice({
         localStorage.removeItem("accessToken");
         state.status = "idle";
       })
-      .addCase(logout.rejected, (state, action) => {
+      .addCase(logout.rejected, (state) => {
         state.accessToken = null;
         localStorage.removeItem("accessToken");
         state.status = "idle";
@@ -76,4 +76,4 @@ export const { setCredentials, clearCredentials } = authSlice.actions;
 
 export default authSlice.reducer;
 
-export const selectIsAuthenticated = (state) => !!state.auth.accessToken;
+export const selectIsAuthenticated = (state: any) => !!state.auth.accessToken;

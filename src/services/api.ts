@@ -1,9 +1,16 @@
 import axios from "axios";
-import { store } from "../store";
+import { store } from "../app/store";
 import { logout, setCredentials } from "../features/authSlice";
-import { access } from "fs";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+
+interface AuthState {
+  accessToken: string | null;
+}
+
+interface RootState {
+  auth: AuthState;
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,7 +19,9 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.accessToken;
+    const state = store.getState() as RootState;
+    const token = state.auth.accessToken;
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
