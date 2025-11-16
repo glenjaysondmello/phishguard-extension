@@ -3,20 +3,50 @@
 
 import axios from "axios";
 
-const DEFAULT_BLACKLIST: string[] = [
-  "example-phish.com",
-  "bad-login.example",
-  "google.com",
-];
+const API_BASE_URL = "http://localhost:8080";
+
+const fetchAndCachedBlacklist = async () => {
+  try {
+    const { data } = await axios.get(`${API_BASE_URL}/blacklist`);
+
+    if (data && data.ok && Array.isArray(data.data)) {
+      const domainList: string[] = data.data.map((item: any) => item.domain);
+
+      await browser.storage.local.set({
+        blacklist: domainList,
+        blacklistLastUpdated: Date.now(),
+      });
+
+      console.log(
+        `PhishGuard: Successfully cached ${domainList.length} domains.`
+      );
+    }
+  } catch (error) {
+    console.error("PhishGuard: Failed to fetch or cache blacklist:", error);
+  }
+};
 
 browser.runtime.onInstalled.addListener(async () => {
   console.log("PhishGuard background script installed");
   // Initialize storage
   await browser.storage.local.set({
-    blacklist: DEFAULT_BLACKLIST,
     modelCached: false,
     prefs: { language: "en", fallbackToServer: true },
+    blacklist: [],
   });
+
+  await fetchAndCachedBlacklist();
+
+  browser.alarms.create("updateBlackAlarm", {
+    periodInMinutes: 60,
+  });
+});
+
+browser.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "updateBlackAlarm") {
+    console.log("PhishGuard: Periodic alarm triggered, updating blacklist...");
+    fetchAndCachedBlacklist();
+  }
 });
 
 // Message handler from content scripts / popup
@@ -41,13 +71,16 @@ browser.runtime.onMessage.addListener(
         return false;
       }
 
-      axios.post("http://localhost:8080/report", payload).then((res) => {
-        console.log("Report submitted:", res.data);
-        sendResponse({ ok: true, data: res.data });
-      }).catch((err) => {
-        console.error("Error submitting report:", err);
-        sendResponse({ ok: false, error: String(err) });
-      });
+      axios
+        .post(`${API_BASE_URL}/report`, payload)
+        .then((res) => {
+          console.log("Report submitted:", res.data);
+          sendResponse({ ok: true, data: res.data });
+        })
+        .catch((err) => {
+          console.error("Error submitting report:", err);
+          sendResponse({ ok: false, error: String(err) });
+        });
 
       // browser.storage.local.get(["reports"]).then((res: any) => {
       //   const reports = res.reports || [];
@@ -67,7 +100,11 @@ async function handleCheckUrl(urlString: string) {
     const host = url.hostname;
     const { blacklist } = await browser.storage.local.get(["blacklist"]);
     const list: string[] = blacklist || [];
-    const isBlacklisted = list.some((domain) => host.includes(domain));
+    // const isBlacklisted = list.some((domain) => host.includes(domain));
+    const isBlacklisted = list.some(
+      (domain) => host === domain || host.endsWith("." + domain)
+    );
+
     // placeholder heuristic: suspicious if URL has login + query params or punycode
     const isSuspicious =
       /login|signin|account/.test(url.pathname) && url.search.length > 0;
