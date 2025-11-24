@@ -31,7 +31,7 @@ export default function Popup() {
         currentWindow: true,
       });
 
-      if(!currentTab || !currentTab.url) {
+      if (!currentTab || !currentTab.url) {
         alert(t("report_failure"));
         return;
       }
@@ -43,7 +43,7 @@ export default function Popup() {
           pageTitle: currentTab.title || "",
           userComment,
           fromExtension: true,
-        }
+        },
       });
 
       if (resp?.ok) {
@@ -56,6 +56,11 @@ export default function Popup() {
       alert(t("report_failure"));
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value);
+    localStorage.setItem("i18nextLng", e.target.value);
+  }
 
   return (
     <div
@@ -106,11 +111,13 @@ export default function Popup() {
         <button onClick={reportUrl}>{t("report")}</button>
         <select
           value={i18n.language}
-          onChange={(e) => i18n.changeLanguage(e.target.value)}
+          onChange={handleChange}
           style={{ marginLeft: 8 }}
         >
           <option value="en">English</option>
           <option value="hi">हिन्दी</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="tulu">ತುಳು</option>
         </select>
       </div>
     </div>

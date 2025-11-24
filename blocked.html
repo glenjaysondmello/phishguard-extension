@@ -1,16 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>Unsafe Site Blocked</title>
-</head>
-<body style="font-family: sans-serif; padding: 20px;">
-  <h1 style="color: red;">⚠️ Unsafe Website Blocked</h1>
+  <head>
+    <meta charset="utf-8" />
+    <title>Unsafe Site Blocked</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        color: red;
+      }
+      select {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-row">
+      <select id="language-selector">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="kn">ಕನ್ನಡ</option>
+        <option value="tulu">ತುಳು</option>
+      </select>
+    </div>
 
-  <p id="blocked-domain"></p>
+    <h1 data-i18n="title">⚠️ Unsafe Website Blocked</h1>
 
-  <button id="allow-btn">Proceed Anyway (Allow Once)</button>
+    <p>
+      <span data-i18n="blockedLabel">Blocked URL:</span>
+      <strong id="url-display"></strong>
+    </p>
 
-  <script src="blocked.js"></script>
-</body>
+    <button id="allow-btn" data-i18n="btnProceed">Proceed Anyway</button>
+
+    <script src="blocked.js"></script>
+  </body>
 </html>
