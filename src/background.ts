@@ -48,22 +48,44 @@ browser.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
+const temporaryAllowList = new Set();
+
+browser.runtime.onMessage.addListener((msg) => {
+  if (msg.type === "ALLOW_ONCE") {
+    temporaryAllowList.add(msg.url);
+    console.log("PhishGuard: Temporarily allowing", msg.url);
+
+    browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+      browser.tabs.update(tabs[0].id!, { url: msg.url });
+    });
+  }
+});
+
 browser.webRequest.onBeforeRequest.addListener(
   async (details) => {
+    const fullUrl = details.url;
+    
+    if (temporaryAllowList.has(fullUrl)) {
+      console.log("PhishGuard: URL is temporarily allowed:", fullUrl);
+      temporaryAllowList.delete(fullUrl);
+      return {};
+    }
+
     const { blacklist } = await browser.storage.local.get(["blacklist"]);
     const list: string[] = blacklist || [];
 
-    const url = new URL(details.url);
-    const host = url.hostname;
+    const urlObj = new URL(fullUrl);
+    const host = urlObj.hostname;
 
     const isBlaclisted = list.some(
       (domain) => host === domain || host.endsWith("." + domain)
     );
 
     if (isBlaclisted) {
-      console.log(browser.runtime.getURL("blocked.html"));
       return {
-        redirectUrl: browser.runtime.getURL("blocked.html"),
+        redirectUrl: browser.runtime.getURL(
+          `blocked.html?url=${encodeURIComponent(fullUrl)}`
+        ),
       };
     }
 

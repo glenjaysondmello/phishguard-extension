@@ -46,5 +46,5 @@
     "open_in_tab": false
   },
 
-  "web_accessible_resources": ["blocked.html"]
+  "web_accessible_resources": ["blocked.html", "blocked.js"]
 }

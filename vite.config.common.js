@@ -5,6 +5,7 @@ export const sharedPlugins = [
     targets: [
       { src: "manifest.json", dest: "dist" },
       { src: "blocked.html", dest: "dist" },
+      { src: "blocked.js", dest: "dist" },
       { src: "icons", dest: "dist" },
       { src: "locales", dest: "dist" }
     ],
