@@ -1,4 +1,3 @@
-// src/background.ts
 // MV2 background script
 
 import axios from "axios";
@@ -48,6 +47,33 @@ browser.alarms.onAlarm.addListener((alarm) => {
     fetchAndCachedBlacklist();
   }
 });
+
+browser.webRequest.onBeforeRequest.addListener(
+  async (details) => {
+    const { blacklist } = await browser.storage.local.get(["blacklist"]);
+    const list: string[] = blacklist || [];
+
+    const url = new URL(details.url);
+    const host = url.hostname;
+
+    const isBlaclisted = list.some(
+      (domain) => host === domain || host.endsWith("." + domain)
+    );
+
+    if (isBlaclisted) {
+      console.log(browser.runtime.getURL("blocked.html"));
+      return {
+        redirectUrl: browser.runtime.getURL("blocked.html"),
+      };
+    }
+
+    return {};
+  },
+  {
+    urls: ["<all_urls>"],
+  },
+  ["blocking"]
+);
 
 // Message handler from content scripts / popup
 browser.runtime.onMessage.addListener(

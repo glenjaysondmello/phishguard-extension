@@ -27,7 +27,9 @@
     "tabs",
     "activeTab",
     "alarms",
-    "<all_urls>"
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking"
   ],
 
   "content_scripts": [
@@ -35,10 +37,7 @@
       "matches": ["<all_urls>"],
       "js": ["contentScript.js"],
       "run_at": "document_idle",
-      "exclude_matches": [
-        "http://localhost:5173/*",
-        "http://localhost:3000/*"
-      ]
+      "exclude_matches": ["http://localhost:5173/*", "http://localhost:3000/*"]
     }
   ],
 
@@ -47,9 +46,5 @@
     "open_in_tab": false
   },
 
-  "web_accessible_resources": [
-    "model/*",
-    "icons/*",
-    "locales/*"
-  ]
+  "web_accessible_resources": ["blocked.html"]
 }

@@ -59,7 +59,7 @@ export default function Popup() {
 
   return (
     <div
-      style={{ width: 320, padding: 16, fontFamily: "system-ui, sans-serif" }}
+      style={{ width: 400, padding: 16, fontFamily: "system-ui, sans-serif" }}
     >
       <h3>{t("title")}</h3>
       <div style={{ fontSize: 13, marginBottom: 8, wordBreak: "break-all" }}>

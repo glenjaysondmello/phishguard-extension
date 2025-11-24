@@ -1,4 +1,3 @@
-// src/contentScript.ts
 // runs in page context (isolated world)
 
 (function () {

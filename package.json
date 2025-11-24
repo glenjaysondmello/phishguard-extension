@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --config vite.config.ui.ts && vite build --config vite.config.background.ts && vite build --config vite.config.content.ts && node ./scripts/copy-manifest-and-assets.cjs",
+    "build": "tsc && vite build --config vite.config.ui.ts && vite build --config vite.config.background.ts && vite build --config vite.config.content.ts",
     "preview": "vite preview --port 5174",
     "lint": "eslint --ext .ts,.tsx src || true",
     "typecheck": "tsc --noEmit"
@@ -21,6 +21,7 @@
     "react-i18next": "^14.1.2",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.6",
+    "rollup-plugin-copy": "^3.5.0",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
