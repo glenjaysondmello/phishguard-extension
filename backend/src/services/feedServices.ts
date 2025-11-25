@@ -65,19 +65,34 @@ export const updateOpenPhish = async () => {
 
 export const updateUrlHaus = async () => {
   try {
-    const url = 'https://urlhaus.abuse.ch/downloads/csv_recent/';
-    const response = await axios.get(url, { responseType: 'stream' });
+    const url = "https://urlhaus.abuse.ch/downloads/csv_recent/";
+    const response = await axios.get(url, { responseType: "stream" });
 
-    const stream = response.data.pipe(csv({ 
-      skipComments: true,
-      headers: ['id', 'dateadded', 'url', 'url_status', 'last_online', 'threat', 'tags', 'urlhaus_link', 'reporter'] 
-    }));
+    const stream = response.data.pipe(
+      csv({
+        skipComments: true,
+        headers: [
+          "id",
+          "dateadded",
+          "url",
+          "url_status",
+          "last_online",
+          "threat",
+          "tags",
+          "urlhaus_link",
+          "reporter",
+        ],
+      })
+    );
 
-    await processStream(stream, (row) => {
-      return row.url ? row.url.trim() : null;
-    }, 'URLhaus');
-
+    await processStream(
+      stream,
+      (row) => {
+        return row.url ? row.url.trim() : null;
+      },
+      "URLhaus"
+    );
   } catch (error) {
-    console.error('[URLhaus] Error:', error);
+    console.error("[URLhaus] Error:", error);
   }
 };

@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import * as Sentry from "@sentry/node";
 
-import { initSentry } from './sentry';
+import { initSentry } from "./sentry";
 
 // import { adminApiKeyMiddleware } from "./middleware/authApiKey";
 import { errorHandler } from "./middleware/errorHandler";
@@ -15,6 +15,7 @@ import { initScheduler } from "./jobs/scheduler";
 import authRouter from "./routers/auth";
 import blacklistRouter from "./routers/blacklist";
 import reportRouter from "./routers/report";
+import check from "./routers/check";
 
 dotenv.config();
 initSentry();
@@ -26,9 +27,12 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
   cors({
-    origin: ["moz-extention://5aada905-217b-45d2-83d7-d591dad55b74", "http://localhost:5173"],
+    origin: [
+      "moz-extention://5aada905-217b-45d2-83d7-d591dad55b74",
+      "http://localhost:5173",
+    ],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
-    credentials: true
+    credentials: true,
   })
 );
 
@@ -79,6 +83,7 @@ app.get("/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
 app.use("/auth", authRouter);
 app.use("/blacklist", blacklistRouter);
 app.use("/report", reportRouter);
+app.use("/", check);
 
 // SENTRY TEST ROUTE
 app.get("/debug-sentry", function mainHandler(req, res) {
