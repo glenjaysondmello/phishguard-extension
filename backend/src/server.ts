@@ -10,6 +10,8 @@ import { initSentry } from './sentry';
 
 // import { adminApiKeyMiddleware } from "./middleware/authApiKey";
 import { errorHandler } from "./middleware/errorHandler";
+import { initScheduler } from "./jobs/scheduler";
+
 import authRouter from "./routers/auth";
 import blacklistRouter from "./routers/blacklist";
 import reportRouter from "./routers/report";
@@ -54,6 +56,9 @@ mongoose
     console.error("Mongo connection error", err);
     process.exit(1);
   });
+
+// Initialize Scheduler
+initScheduler();
 
 // Routes
 app.get("/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
