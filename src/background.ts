@@ -4,6 +4,29 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8080";
 
+const checkRemoteDatabase = async (fullUrl: string) => {
+  try {
+    if (
+      fullUrl.includes("localhost") ||
+      fullUrl.includes("127.0.0.1") ||
+      fullUrl.startsWith("chrome-extension://") ||
+      fullUrl.startsWith("moz-extension://") ||
+      fullUrl.startsWith("about:")
+    ) {
+      return false;
+    }
+
+    const response = await axios.post(`${API_BASE_URL}/check-url`, {
+      url: fullUrl,
+    });
+
+    return !response.data.safe;
+  } catch (error) {
+    console.error("API Check failed, failing open (allowing):", error);
+    return false;
+  }
+};
+
 const fetchAndCachedBlacklist = async () => {
   try {
     const { data } = await axios.get(`${API_BASE_URL}/blacklist`);
@@ -64,7 +87,7 @@ browser.runtime.onMessage.addListener((msg) => {
 browser.webRequest.onBeforeRequest.addListener(
   async (details) => {
     const fullUrl = details.url;
-    
+
     if (temporaryAllowList.has(fullUrl)) {
       console.log("PhishGuard: URL is temporarily allowed:", fullUrl);
       temporaryAllowList.delete(fullUrl);
@@ -77,16 +100,29 @@ browser.webRequest.onBeforeRequest.addListener(
     const urlObj = new URL(fullUrl);
     const host = urlObj.hostname;
 
-    const isBlaclisted = list.some(
+    const isBlacklisted = list.some(
       (domain) => host === domain || host.endsWith("." + domain)
     );
 
-    if (isBlaclisted) {
+    if (isBlacklisted) {
       return {
         redirectUrl: browser.runtime.getURL(
           `blocked.html?url=${encodeURIComponent(fullUrl)}`
         ),
       };
+    }
+
+    if (details.type === "main_frame") {
+      const isRemoteThreat = await checkRemoteDatabase(fullUrl);
+      
+      if (isRemoteThreat) {
+        console.log("PhishGuard Block: Found in Global Threat Feed");
+        return {
+          redirectUrl: browser.runtime.getURL(
+            `blocked.html?url=${encodeURIComponent(fullUrl)}&source=GlobalFeed`
+          ),
+        };
+      }
     }
 
     return {};
@@ -146,12 +182,17 @@ async function handleCheckUrl(urlString: string) {
   try {
     const url = new URL(urlString);
     const host = url.hostname;
+    
     const { blacklist } = await browser.storage.local.get(["blacklist"]);
     const list: string[] = blacklist || [];
-    // const isBlacklisted = list.some((domain) => host.includes(domain));
-    const isBlacklisted = list.some(
+    // const isLocalBlacklisted = list.some((domain) => host.includes(domain));
+    const isLocalBlacklisted = list.some(
       (domain) => host === domain || host.endsWith("." + domain)
     );
+
+    const isRemoteBlacklisted = await checkRemoteDatabase(urlString);
+
+    const isBlacklisted = isLocalBlacklisted || isRemoteBlacklisted;
 
     // placeholder heuristic: suspicious if URL has login + query params or punycode
     const isSuspicious =
