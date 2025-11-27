@@ -12,7 +12,7 @@ i18n.use(initReactI18next).init({
     kn: { translation: kn },
     tulu: { translation: tulu },
   },
-  lng: localStorage.getItem("i18nextLng") || 'en',
+  lng: localStorage.getItem("preferred-lang") || 'en',
   fallbackLng: 'en',
   interpolation: { escapeValue: false }
 });

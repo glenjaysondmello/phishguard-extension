@@ -1,12 +1,17 @@
 {
-  "title": "PhishGuard",
+  "title": "FishGuard",
   "scanning": "Scanning page...",
   "host": "Host",
   "blacklisted": "Blacklisted",
   "suspicious": "Suspicious",
   "confidence": "Confidence",
-  "report": "Report this URL",
-  "reported": "URL reported — thank you!",
+  "report": "Submit Report",
+  "verdict_unsafe": "Unsafe / Suspicious",
+  "verdict_safe": "Safe Website",
+  "report_page_title": "Report this page",
+  "report_placeholder": "Describe why this site is suspicious...",
+  "report_success": "Report submitted successfully!",
+  "report_failure": "Failed to submit report.",
   "yes": "Yes",
   "no": "No"
 }
