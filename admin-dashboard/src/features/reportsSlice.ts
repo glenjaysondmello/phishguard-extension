@@ -1,8 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
+interface Report {
+  _id: string;
+  url: string;
+  host: string;
+  pageTitle?: string;
+  userComment?: string;
+  userAgent?: string;
+  fromExtension?: boolean;
+  createdAt: string;
+  status: "pending" | "reviewed" | "ignored";
+}
+
 const initialState = {
-  items: [],
+  items: [] as Report[],
   total: 0,
   page: 0,
   limit: 25,
@@ -15,6 +27,18 @@ interface Params {
   limit?: number;
   status?: string;
 }
+
+export const removeReport = createAsyncThunk(
+  "reports/removeReport",
+  async (reportId: string, { rejectWithValue }) => {
+    try {
+      await api.delete(`/report/${reportId}`);
+      return reportId;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const fetchReports = createAsyncThunk(
   "reports/fetchReports",
@@ -55,6 +79,14 @@ const reportsSlice = createSlice({
       })
       .addCase(fetchReports.rejected, (state, action: any) => {
         state.status = "failed";
+        state.error = action.payload.error;
+      })
+      .addCase(removeReport.fulfilled, (state, action) => {
+        state.items = state.items.filter(
+          (report) => report._id !== action.payload
+        );
+      })
+      .addCase(removeReport.rejected, (state, action: any) => {
         state.error = action.payload.error;
       });
   },
