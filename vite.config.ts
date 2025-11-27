@@ -1,3 +1,4 @@
+// Not used currently but kept for reference
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";

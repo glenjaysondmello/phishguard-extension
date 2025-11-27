@@ -1,3 +1,4 @@
+// Not used currently but kept for reference
 import { defineConfig } from "vite";
 
 export default defineConfig({
