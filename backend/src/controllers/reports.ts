@@ -4,7 +4,7 @@ import { reportSchema } from "../schemas/report.schema";
 import { ReportModel } from "../models/Report";
 import { extractHostname } from "../utils/logger";
 
-export async function createReport(req: Request, res: Response) {
+export const createReport = async (req: Request, res: Response) => {
   try {
     const parsed = reportSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -31,9 +31,23 @@ export async function createReport(req: Request, res: Response) {
     console.error("createReport error", error);
     return res.status(500).json({ error: "internal_error" });
   }
-}
+};
 
-export async function listReports(req: Request, res: Response) {
+export const removeReport = async (req: Request, res: Response) => {
+  try {
+    const reportId = String(req.params.reportId || "").trim();
+    if (!reportId) return res.status(400).json({ error: "reportId required" });
+
+    await ReportModel.deleteOne({ _id: reportId });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error("removeReport error", error);
+    return res.status(500).json({ error: "internal_error" });
+  }
+};
+
+export const listReports = async (req: Request, res: Response) => {
   try {
     const page = Math.max(0, Number(req.query.page) || 0);
     const limit = Math.min(100, Number(req.query.limit) || 25);
@@ -53,4 +67,4 @@ export async function listReports(req: Request, res: Response) {
     console.error("listReports error", error);
     return res.status(500).json({ error: "internal_error" });
   }
-}
+};

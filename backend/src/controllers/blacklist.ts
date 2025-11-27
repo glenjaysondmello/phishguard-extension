@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { blacklistSchema } from "../schemas/blacklist.schema";
 import { BlacklistModel } from "../models/Blacklist";
 
-export async function addToBlacklist(req: Request, res: Response) {
+export const addToBlacklist = async (req: Request, res: Response) => {
   try {
     const id = (req as any).adminId || null;
     const parsed = blacklistSchema.safeParse(req.body);
@@ -23,9 +23,9 @@ export async function addToBlacklist(req: Request, res: Response) {
     console.error("addToBlacklist error", error);
     return res.status(500).json({ error: "internal_error" });
   }
-}
+};
 
-export async function listBlacklist(req: Request, res: Response) {
+export const listBlacklist = async (req: Request, res: Response) => {
   try {
     const docs = await BlacklistModel.find()
       .sort({ createdAt: -1 })
@@ -36,9 +36,9 @@ export async function listBlacklist(req: Request, res: Response) {
     console.error("listBlacklist error", error);
     return res.status(500).json({ error: "internal_error" });
   }
-}
+};
 
-export async function removeFromBlacklist(req: Request, res: Response) {
+export const removeFromBlacklist = async (req: Request, res: Response) => {
   try {
     const domain = String(req.params.domain || "")
       .toLowerCase()
@@ -52,4 +52,4 @@ export async function removeFromBlacklist(req: Request, res: Response) {
     console.error("removeFromBlacklist error", error);
     return res.status(500).json({ error: "internal_error" });
   }
-}
+};
