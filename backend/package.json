@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --transpile-only --respawn src/server.ts",
-    "build": "cd backend && npm install && npm run build",
+    "build": "npm install && npm run build",
     "start": "node dist/server.js",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit"
