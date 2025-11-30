@@ -28,9 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: [
-      "moz-extention://5aada905-217b-45d2-83d7-d591dad55b74",
+      "moz-extension://5aada905-217b-45d2-83d7-d591dad55b74",
       "http://localhost:5173",
-      "https://phishguard-extension.vercel.app"
     ],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
     credentials: true,

@@ -60,7 +60,7 @@ browser.runtime.onInstalled.addListener(async () => {
   await fetchAndCachedBlacklist();
 
   browser.alarms.create("updateBlackAlarm", {
-    periodInMinutes: 1,
+    periodInMinutes: 0.1,
   });
 });
 

@@ -18,6 +18,8 @@ export const addToBlacklist = async (req: Request, res: Response) => {
       { upsert: true, new: true }
     );
 
+    console.log(doc);
+    
     return res.status(201).json({ ok: true, data: doc });
   } catch (error) {
     console.error("addToBlacklist error", error);
@@ -31,6 +33,8 @@ export const listBlacklist = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 })
       .limit(1000);
 
+      console.log(docs);
+      
     return res.json({ ok: true, data: docs });
   } catch (error) {
     console.error("listBlacklist error", error);
