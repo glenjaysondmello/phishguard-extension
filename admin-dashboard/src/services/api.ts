@@ -42,9 +42,8 @@ export const injectStore = (store: any) => {
     async (error) => {
       const originalRequest = error.config;
 
-      // Add a check to prevent looping on refresh calls themselves
+      // check to prevent looping on refresh calls themselves
       if (originalRequest.url === "/auth/refresh") {
-        // If refresh itself fails, just clear credentials and reject
         store.dispatch({ type: "auth/clearCredentials" });
         return Promise.reject(error);
       }
@@ -55,7 +54,6 @@ export const injectStore = (store: any) => {
         try {
           const { data } = await apiRefresh.post("/auth/refresh");
 
-          // *** THE FIX ***
           // Dispatch by type instead of importing the action
           store.dispatch({
             type: "auth/setCredentials",
@@ -69,8 +67,6 @@ export const injectStore = (store: any) => {
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
 
-          // *** THE FIX ***
-          // Dispatch by type instead of importing the action
           store.dispatch({ type: "auth/clearCredentials" });
 
           return Promise.reject(refreshError);
