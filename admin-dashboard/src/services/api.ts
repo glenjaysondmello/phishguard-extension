@@ -1,5 +1,4 @@
 import axios from "axios";
-// import { logout, setCredentials } from "../features/authSlice"; // <-- REMOVE THIS LINE
 
 const API_BASE_URL =
   import.meta.env.VITE_APP_API_URL || "http://localhost:8080";
