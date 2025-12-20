@@ -29,6 +29,7 @@ app.use(
   cors({
     origin: [
       "moz-extension://5aada905-217b-45d2-83d7-d591dad55b74",
+      "https://phishguard-extension.vercel.app",
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
