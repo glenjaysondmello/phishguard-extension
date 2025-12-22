@@ -1,0 +1,42 @@
+{
+  "name": "phishguard-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build --config vite.config.ui.ts && vite build --config vite.config.background.ts && vite build --config vite.config.content.ts",
+    "preview": "vite preview --port 5174",
+    "lint": "eslint --ext .ts,.tsx src || true",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.10.1",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "i18next": "^23.11.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.2",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.6",
+    "rollup-plugin-copy": "^3.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/firefox-webext-browser": "^120.0.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.19.25",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^5.1.0",
+    "esbuild": "^0.18.0",
+    "eslint": "^8.57.0",
+    "fs-extra": "^11.2.0",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.5.0",
+    "vite": "^5.0.0",
+    "vite-plugin-iife": "^2.0.2"
+  }
+}
