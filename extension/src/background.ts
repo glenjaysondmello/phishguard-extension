@@ -1,5 +1,3 @@
-// MV2 background script
-
 import axios from "axios";
 
 const API_BASE_URL = "https://phish-service.onrender.com";
@@ -60,7 +58,7 @@ browser.runtime.onInstalled.addListener(async () => {
   await fetchAndCachedBlacklist();
 
   browser.alarms.create("updateBlackAlarm", {
-    periodInMinutes: 1,
+    periodInMinutes: 60,
   });
 });
 
@@ -71,26 +69,42 @@ browser.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-const temporaryAllowList = new Set();
+const temporaryAllowList = new Map<string, number>();
 
-browser.runtime.onMessage.addListener((msg) => {
+browser.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "ALLOW_ONCE") {
-    temporaryAllowList.add(msg.url);
+    const expiry = Date.now() + 10000; // 10 seconds from now
+
+    const url = msg.url.replace(/\/$/, "");
+    temporaryAllowList.set(url, expiry);
     console.log("PhishGuard: Temporarily allowing", msg.url);
 
-    browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-      browser.tabs.update(tabs[0].id!, { url: msg.url });
-    });
+    if (sender.tab && sender.tab.id) {
+      browser.tabs.update(sender.tab.id, { url: msg.url });
+    } else {
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        browser.tabs.update(tabs[0].id!, { url: msg.url });
+      });
+    }
   }
 });
 
 browser.webRequest.onBeforeRequest.addListener(
   async (details) => {
     const fullUrl = details.url;
+    const normalizedUrl = fullUrl.replace(/\/$/, "");
 
-    if (temporaryAllowList.has(fullUrl)) {
-      console.log("PhishGuard: URL is temporarily allowed:", fullUrl);
-      temporaryAllowList.delete(fullUrl);
+    if (temporaryAllowList.has(normalizedUrl)) {
+      const expiry = temporaryAllowList.get(normalizedUrl)!;
+      if (Date.now() < expiry) {
+        console.log("PhishGuard: URL is temporarily allowed:", fullUrl);
+        return {};
+      } else {
+        temporaryAllowList.delete(fullUrl);
+      }
+    }
+
+    if (details.type !== "main_frame" && details.type !== "sub_frame") {
       return {};
     }
 
@@ -114,7 +128,7 @@ browser.webRequest.onBeforeRequest.addListener(
 
     if (details.type === "main_frame") {
       const isRemoteThreat = await checkRemoteDatabase(fullUrl);
-      
+
       if (isRemoteThreat) {
         console.log("PhishGuard Block: Found in Global Threat Feed");
         return {
@@ -147,7 +161,7 @@ browser.runtime.onMessage.addListener(
 
     if (message?.type === "REPORT_URL") {
       // In Phase 1 we just store locally; later we POST to backend
-      const reported = message.url;
+      // const reported = message.url;
       const payload = message.payload;
 
       if (!payload || !payload.url) {
@@ -182,7 +196,7 @@ async function handleCheckUrl(urlString: string) {
   try {
     const url = new URL(urlString);
     const host = url.hostname;
-    
+
     const { blacklist } = await browser.storage.local.get(["blacklist"]);
     const list: string[] = blacklist || [];
     // const isLocalBlacklisted = list.some((domain) => host.includes(domain));
