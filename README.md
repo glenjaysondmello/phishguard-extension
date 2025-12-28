@@ -16,6 +16,7 @@ A robust browser extension engineered to proactively detect and protect users fr
 *   **📊 Centralized Admin Dashboard:** Offers administrators a comprehensive overview of detected threats, user activity, and system health through an intuitive web interface.
 *   **⚙️ Robust Backend Analysis:** Powers the extension with a scalable backend infrastructure capable of processing and analyzing vast amounts of data for threat intelligence.
 *   **🔔 Customizable Alert System:** Notifies users immediately upon encountering a potential phishing threat, with options to customize alert preferences and severity.
+*   **🌐 Multi-language Support:** Increases accessibility and user trust by offering a localized interface and real-time alerts in English, Hindi, and Kannada, catering to a diverse range of users.
 
 ## 🚀 Installation Guide
 
