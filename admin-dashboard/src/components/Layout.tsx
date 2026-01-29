@@ -1,20 +1,20 @@
+import { useState } from 'react';
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from './Sidebar';
 
 const Layout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm p-4">
-          <h1 className="text-xl font-semibold text-gray-800">
-            PhishGuard Admin
-          </h1>
-        </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-          <Outlet />
-        </main>
-      </div>
+    <div className="flex h-screen bg-linear-to-br from-slate-50 via-blue-50 to-slate-50 font-sans">
+      {/* Sidebar Component */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-auto flex flex-col">
+        {/* The Outlet renders ReportsPage or BlacklistPage*/}
+        <Outlet />
+      </main>
     </div>
   );
 };
