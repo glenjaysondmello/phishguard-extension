@@ -1,52 +1,82 @@
-import { NavLink } from 'react-router-dom';
-import { useAppDispatch } from '../app/hooks';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, Shield, FileText, Ban, LogOut } from 'lucide-react';
+import { useAppDispatch } from "../app/hooks"; 
 import { logout } from '../features/authSlice';
 
-const ReportIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
-const BlacklistIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>;
-const LogoutIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}
 
-const Sidebar = () => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
+
+  const isActive = (path: string) => location.pathname.includes(path);
+
+  const navItemClass = (path: string) => 
+    `w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+      isActive(path)
+        ? 'bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30'
+        : 'text-slate-700 hover:bg-slate-100'
+    }`;
+
   const handleLogout = () => {
     dispatch(logout());
+    navigate('/login');
   };
 
-  const linkClass = "flex items-center px-4 py-2 mt-2 text-gray-600 transition-colors duration-200 transform rounded-md hover:bg-gray-200 hover:text-gray-700";
-  const activeLinkClass = "flex items-center px-4 py-2 mt-2 text-gray-700 bg-gray-200 rounded-md";
-
   return (
-    <div className="flex flex-col w-64 h-screen px-4 py-8 bg-white border-r">
-      <h2 className="text-3xl font-bold text-center text-gray-800">
-        PhishGuard
-      </h2>
-      <div className="flex flex-col justify-between flex-1 mt-6">
-        <nav>
-          <NavLink
-            to="/reports"
-            className={({ isActive }) => isActive ? activeLinkClass : linkClass}
-          >
-            <ReportIcon />
-            <span className="mx-4 font-medium">Reports</span>
-          </NavLink>
-          <NavLink
-            to="/blacklist"
-            className={({ isActive }) => isActive ? activeLinkClass : linkClass}
-          >
-            <BlacklistIcon />
-            <span className="mx-4 font-medium">Blacklist</span>
-          </NavLink>
-        </nav>
-        <button
-          onClick={handleLogout}
-          className={`${linkClass} text-red-600 hover:bg-red-100 hover:text-red-700`}
+    <aside 
+      className={`${sidebarOpen ? 'w-72' : 'w-20'} bg-white border-r border-slate-200 transition-all duration-300 ease-in-out shadow-xl flex flex-col z-20 h-screen`}
+    >
+      {/* Sidebar Header */}
+      <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+        {sidebarOpen && (
+          <div className="flex items-center gap-3">
+            <div className="bg-linear-to-br from-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                PhishGuard
+              </h1>
+              <p className="text-xs text-slate-500">Admin Dashboard</p>
+            </div>
+          </div>
+        )}
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)} 
+          className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
         >
-          <LogoutIcon />
-          <span className="mx-4 font-medium">Logout</span>
+          {sidebarOpen ? <X className="w-5 h-5 text-slate-600" /> : <Menu className="w-5 h-5 text-slate-600" />}
         </button>
       </div>
-    </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-1 p-4 space-y-2">
+        <Link to="/reports" className={navItemClass('reports')}>
+          <FileText className="w-5 h-5" />
+          {sidebarOpen && <span className="font-medium">Reports</span>}
+        </Link>
+        <Link to="/blacklist" className={navItemClass('blacklist')}>
+          <Ban className="w-5 h-5" />
+          {sidebarOpen && <span className="font-medium">Blacklist</span>}
+        </Link>
+      </nav>
+
+      {/* Footer / Logout */}
+      <div className="p-4 border-t border-slate-200">
+        <button 
+          onClick={handleLogout} 
+          className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          {sidebarOpen && <span className="font-medium">Logout</span>}
+        </button>
+      </div>
+    </aside>
   );
 };
 

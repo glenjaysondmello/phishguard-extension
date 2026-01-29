@@ -1,22 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { fetchReports, removeReport } from "../features/reportsSlice";
-import Spinner from "../components/Spinner";
+import { Calendar, Clock, AlertCircle, CheckCircle, Trash2, ExternalLink, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
 const ReportsPage = () => {
   const dispatch = useAppDispatch();
-  const {
-    items: reports,
-    status,
-    total,
-    page,
-    limit,
-  } = useAppSelector((state) => state.reports);
-  const [currentPage, setCurrentPage] = useState(0);
+  const { items: reports, status, total, page, limit } = useAppSelector((state) => state.reports);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    dispatch(fetchReports({ page: currentPage }));
-  }, [dispatch, currentPage]);
+    dispatch(fetchReports({ page }));
+  }, [dispatch, page]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -26,118 +20,124 @@ const ReportsPage = () => {
     }
   };
 
-  const handlePrev = () => {
-    setCurrentPage((prev) => Math.max(0, prev - 1));
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      dispatch(fetchReports({ page: newPage }));
+    }
   };
 
-  const handleNext = () => {
-    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'reviewed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'resolved': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending': return <Clock className="w-3 h-3" />;
+      case 'reviewed': return <AlertCircle className="w-3 h-3" />;
+      case 'resolved': return <CheckCircle className="w-3 h-3" />;
+      default: return null;
+    }
   };
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-4">
-        Manage Reports
-      </h1>
+    <>
+      <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-10">
+        <div className="px-8 py-6">
+          <h2 className="text-3xl font-bold text-slate-900">Phishing Reports</h2>
+          <p className="text-slate-600 mt-1">Manage and review {total} phishing reports</p>
+          
+          <div className="mt-6 relative max-w-2xl">
+            <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search visible reports..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+          </div>
+        </div>
+      </header>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        {status === "loading" && (
-          <div className="p-4">
-            <Spinner />
+      <div className="p-8 space-y-4">
+        {status === 'loading' && (
+           <div className="flex justify-center p-12">
+             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+           </div>
+        )}
+
+        {status === 'failed' && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200">
+            Failed to load reports.
           </div>
         )}
-        {status === "failed" && (
-          <p className="p-4 text-red-500">Failed to load reports.</p>
-        )}
-        {status === "succeeded" && (
-          <>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    URL
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Comment
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {reports.map((report: any) => (
-                  <tr key={report._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          report.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {report.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 truncate max-w-xs">
-                      <a
-                        href={report.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        {report.url}
-                      </a>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate max-w-sm">
-                      {report.userComment || "-"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(report.createdAt).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleRemove(report._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex items-center justify-between p-4 border-t">
-              <span className="text-sm text-gray-700">
-                Showing page {page + 1} of {totalPages} ({total} total reports)
-              </span>
-              <div className="space-x-2">
-                <button
-                  onClick={handlePrev}
-                  disabled={page === 0}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={page + 1 >= totalPages}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
+
+        {status === 'succeeded' && reports
+          .filter((r: any) => 
+            !searchTerm || 
+            r.url?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            r.userComment?.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((report: any) => (
+          <div key={report._id} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 group">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold border ${getStatusColor(report.status)}`}>
+                    {getStatusIcon(report.status)}
+                    {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                  </span>
+                  <span className="text-xs text-slate-500 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(report.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <a href={report.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 mb-2 group-hover:underline">
+                  <span className="truncate">{report.url}</span>
+                  <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                </a>
+                {report.userComment && (
+                  <p className="text-slate-600 text-sm mt-2 bg-slate-50 rounded-lg p-3 border border-slate-100">"{report.userComment}"</p>
+                )}
               </div>
+              <button onClick={() => handleRemove(report._id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600 opacity-50 hover:opacity-100">
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
-          </>
+          </div>
+        ))}
+        
+        {/* Pagination */}
+        {status === 'succeeded' && (
+          <div className="flex items-center justify-between mt-8 bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+            <p className="text-sm text-slate-600">
+              Page <span className="font-semibold">{page + 1}</span> of <span className="font-semibold">{totalPages}</span>
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 0}
+                className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-slate-600" />
+              </button>
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page >= totalPages - 1}
+                className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 
