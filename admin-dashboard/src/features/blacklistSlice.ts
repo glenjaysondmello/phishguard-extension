@@ -4,15 +4,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import api from "../services/api";
-
-interface BlacklistItem {
-  _id: string;
-  domain: string;
-  reason: string;
-  addedBy?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { BlacklistItem } from "../types/blacklist.types";
 
 const initialState = {
   items: [] as BlacklistItem[],
@@ -29,14 +21,14 @@ export const fetchBlacklist = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 export const addBlacklistDomain = createAsyncThunk(
   "blacklist/addBlacklistDomain",
   async (
     { domain, reason }: { domain: string; reason: string },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const { data } = await api.post("/blacklist", { domain, reason });
@@ -44,7 +36,7 @@ export const addBlacklistDomain = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 export const removeBlacklistDomain = createAsyncThunk(
@@ -56,7 +48,7 @@ export const removeBlacklistDomain = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const blacklistSlice = createSlice({
@@ -80,11 +72,11 @@ const blacklistSlice = createSlice({
         addBlacklistDomain.fulfilled,
         (state, action: PayloadAction<BlacklistItem>) => {
           state.items.unshift(action.payload);
-        }
+        },
       )
       .addCase(removeBlacklistDomain.fulfilled, (state, action: any) => {
         state.items = state.items.filter(
-          (item) => item.domain !== action.payload
+          (item) => item.domain !== action.payload,
         );
       });
   },
