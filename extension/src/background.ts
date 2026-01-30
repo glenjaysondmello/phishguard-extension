@@ -1,6 +1,17 @@
 import axios from "axios";
 
+// const API_BASE_URL = "http://localhost:8080";
 const API_BASE_URL = "https://phish-service.onrender.com";
+
+const getReporterId = async (): Promise<String> => {
+  const { reporterId } = await browser.storage.local.get(["reporterId"]);
+  if (reporterId) return reporterId;
+
+  const newId = crypto.randomUUID();
+  await browser.storage.local.set({ reporterId: newId });
+
+  return newId;
+};
 
 const checkRemoteDatabase = async (fullUrl: string) => {
   try {
@@ -38,7 +49,7 @@ const fetchAndCachedBlacklist = async () => {
       });
 
       console.log(
-        `PhishGuard: Successfully cached ${domainList.length} domains.`
+        `PhishGuard: Successfully cached ${domainList.length} domains.`,
       );
     }
   } catch (error) {
@@ -115,13 +126,13 @@ browser.webRequest.onBeforeRequest.addListener(
     const host = urlObj.hostname;
 
     const isBlacklisted = list.some(
-      (domain) => host === domain || host.endsWith("." + domain)
+      (domain) => host === domain || host.endsWith("." + domain),
     );
 
     if (isBlacklisted) {
       return {
         redirectUrl: browser.runtime.getURL(
-          `blocked.html?url=${encodeURIComponent(fullUrl)}`
+          `blocked.html?url=${encodeURIComponent(fullUrl)}`,
         ),
       };
     }
@@ -133,7 +144,7 @@ browser.webRequest.onBeforeRequest.addListener(
         console.log("PhishGuard Block: Found in Global Threat Feed");
         return {
           redirectUrl: browser.runtime.getURL(
-            `blocked.html?url=${encodeURIComponent(fullUrl)}&source=GlobalFeed`
+            `blocked.html?url=${encodeURIComponent(fullUrl)}&source=GlobalFeed`,
           ),
         };
       }
@@ -144,7 +155,7 @@ browser.webRequest.onBeforeRequest.addListener(
   {
     urls: ["<all_urls>"],
   },
-  ["blocking"]
+  ["blocking"],
 );
 
 // Message handler from content scripts / popup
@@ -155,13 +166,12 @@ browser.runtime.onMessage.addListener(
       handleCheckUrl(url)
         .then((result) => sendResponse({ ok: true, result }))
         .catch((err) => sendResponse({ ok: false, error: String(err) }));
+  
       // required for async sendResponse
       return true;
     }
 
     if (message?.type === "REPORT_URL") {
-      // In Phase 1 we just store locally; later we POST to backend
-      // const reported = message.url;
       const payload = message.payload;
 
       if (!payload || !payload.url) {
@@ -169,16 +179,27 @@ browser.runtime.onMessage.addListener(
         return false;
       }
 
-      axios
-        .post(`${API_BASE_URL}/report`, payload)
-        .then((res) => {
-          console.log("Report submitted:", res.data);
-          sendResponse({ ok: true, data: res.data });
-        })
-        .catch((err) => {
-          console.error("Error submitting report:", err);
-          sendResponse({ ok: false, error: String(err) });
-        });
+      (async () => {
+        try {
+          const reporterId = await getReporterId();
+
+          const response = await axios.post(`${API_BASE_URL}/report`, {
+            ...payload,
+            reporterId,
+          });
+
+          console.log("Report submitted:", response.data);
+          sendResponse({ ok: true, data: response.data });
+        } catch (err: any) {
+          if (err.response?.status === 409) {
+            console.log("URL already reported by this user.");
+            sendResponse({ ok: true, duplicate: true });
+          } else {
+            console.error("Error submitting report:", err);
+            sendResponse({ ok: false, error: String(err) });
+          }
+        }
+      })();
 
       // browser.storage.local.get(["reports"]).then((res: any) => {
       //   const reports = res.reports || [];
@@ -189,7 +210,7 @@ browser.runtime.onMessage.addListener(
 
       return true; // async
     }
-  }
+  },
 );
 
 async function handleCheckUrl(urlString: string) {
@@ -201,7 +222,7 @@ async function handleCheckUrl(urlString: string) {
     const list: string[] = blacklist || [];
     // const isLocalBlacklisted = list.some((domain) => host.includes(domain));
     const isLocalBlacklisted = list.some(
-      (domain) => host === domain || host.endsWith("." + domain)
+      (domain) => host === domain || host.endsWith("." + domain),
     );
 
     const isRemoteBlacklisted = await checkRemoteDatabase(urlString);
