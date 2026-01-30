@@ -7,8 +7,14 @@ export interface IReport extends Document {
   userComment?: string;
   userAgent?: string;
   fromExtension: boolean;
+  reportCount: number;
   createdAt: Date;
-  status: "pending" | "reviewed" | "ignored";
+  reporterIds: string[];
+  comments: {
+    text: string;
+    createdAt: Date;
+  }[];
+  status: "pending" | "reviewed" | "resolved" | "ignored";
 }
 
 const ReportSchema = new Schema<IReport>(
@@ -19,15 +25,23 @@ const ReportSchema = new Schema<IReport>(
     userComment: { type: String },
     userAgent: { type: String },
     fromExtension: { type: Boolean, default: true },
+    reportCount: { type: Number, default: 0 },
+    reporterIds: { type: [String], default: [] },
+    comments: [
+      {
+        text: { type: String },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
     status: {
       type: String,
-      enum: ["pending", "reviewed", "ignored"],
+      enum: ["pending", "reviewed", "resolved", "ignored"],
       default: "pending",
     },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },
-  }
+  },
 );
 
 export const ReportModel = model<IReport>("Report", ReportSchema);
