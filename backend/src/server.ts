@@ -32,7 +32,7 @@ app.use(
       "https://phishguard-extension.vercel.app",
       "http://localhost:5173",
     ],
-    methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
