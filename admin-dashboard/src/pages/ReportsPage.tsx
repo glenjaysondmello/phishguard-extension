@@ -86,7 +86,7 @@ const ReportsPage = () => {
 
   return (
     <>
-      {/* Header: Adjusted padding for mobile (px-4 py-4) and desktop (md:px-8 md:py-6) */}
+      {/* Header */}
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-10">
         <div className="px-4 py-4 md:px-8 md:py-6">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
@@ -109,7 +109,7 @@ const ReportsPage = () => {
         </div>
       </header>
 
-      {/* Main Content: Adjusted padding (p-4 mobile, p-8 desktop) */}
+      {/* Main Content */}
       <div className="p-4 md:p-8 space-y-4">
         {status === "loading" && (
           <div className="flex justify-center p-12">
@@ -179,8 +179,7 @@ const ReportsPage = () => {
                       </span>
                     </div>
 
-                    {/* --- URL LINK (FIXED) --- */}
-                    {/* Removed 'truncate' class and ensured 'break-all' is active so URLs wrap on mobile */}
+                    {/* --- URL LINK --- */}
                     <a
                       href={report.url}
                       target="_blank"
