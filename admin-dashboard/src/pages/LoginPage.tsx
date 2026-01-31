@@ -5,11 +5,11 @@ import { login, selectIsAuthenticated } from "../features/authSlice";
 import {
   Mail,
   Lock,
-  ShieldCheck,
   Loader2,
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
+import logo from "../assets/logo.png";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -36,13 +36,31 @@ const LoginPage = () => {
     }
   };
 
+  const getErrorMessage = (errorCode: string | null) => {
+    switch (errorCode) {
+      case "invalid_credentials":
+        return "Incorrect email or password.";
+      case "email_password_required":
+        return "Please enter both email and password.";
+      case "internal_error":
+      case "internal_server_error":
+        return "Something went wrong on our end. Please try again later.";
+      default:
+        return "Authentication failed. Please check your connection.";
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         {/* --- Header / Branding --- */}
         <div className="flex flex-col items-center">
           <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <ShieldCheck className="w-8 h-8 text-blue-600" />
+            <img 
+              src={logo} 
+              alt="PhishGuard Logo" 
+              className="w-full h-full object-contain" 
+            />
           </div>
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
             PhishGuard
@@ -114,7 +132,7 @@ const LoginPage = () => {
                 <div className="text-sm text-red-700">
                   <h3 className="font-medium">Authentication Failed</h3>
                   <p className="mt-0.5 opacity-90">
-                    {auth.error || "Please check your credentials."}
+                    {getErrorMessage(auth.error)}
                   </p>
                 </div>
               </div>

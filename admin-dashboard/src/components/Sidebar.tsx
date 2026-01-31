@@ -1,8 +1,16 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Shield, FileText, Ban, LogOut, ChevronLeft } from "lucide-react";
+import {
+  Menu,
+  X,
+  FileText,
+  Ban,
+  LogOut,
+  ChevronLeft,
+} from "lucide-react";
 import { useAppDispatch } from "../app/hooks";
 import { logout } from "../features/authSlice";
 import { useEffect } from "react";
+import logo from "../assets/logo.png";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -44,13 +52,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       `}
     >
       {/* --- Sidebar Header --- */}
-      <div className={`flex items-center min-h-[88px] border-b border-slate-200 transition-all duration-300 ${sidebarOpen ? "px-6 justify-between" : "px-0 justify-center"}`}>
-        
+      <div
+        className={`flex items-center min-h-[88px] border-b border-slate-200 transition-all duration-300 ${sidebarOpen ? "px-6 justify-between" : "px-0 justify-center"}`}
+      >
         {/* Logo Section */}
         {sidebarOpen ? (
           <div className="flex items-center gap-3 animate-in fade-in duration-300">
-            <div className="bg-linear-to-br from-blue-600 to-indigo-600 p-2 rounded-lg shadow-md shrink-0">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="bg-blue-100 border-b border-slate-200 rounded-full shadow-md shrink-0">
+              <div className="w-10 h-10 shrink-0">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
             <div className="overflow-hidden">
               <h1 className="text-lg font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate leading-tight">
@@ -62,7 +77,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </div>
           </div>
         ) : (
-          /* Collapsed Mode: Just show the toggle button (Menu) centered */
           <button
             onClick={() => setSidebarOpen(true)}
             className="hidden lg:flex p-3 hover:bg-slate-100 rounded-xl transition-colors text-slate-600"
@@ -92,14 +106,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       </div>
 
       {/* --- Navigation --- */}
-      <nav className={`flex-1 p-4 space-y-2 ${sidebarOpen ? "overflow-y-auto" : "overflow-visible"}`}>
+      <nav
+        className={`flex-1 p-4 space-y-2 ${sidebarOpen ? "overflow-y-auto" : "overflow-visible"}`}
+      >
         <Link to="/reports" className={navItemClass("reports")}>
-          <FileText className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`} />
-          
-          <span className={`font-medium whitespace-nowrap transition-all duration-300 ${!sidebarOpen ? "lg:hidden lg:opacity-0" : "opacity-100"}`}>
+          <FileText
+            className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`}
+          />
+
+          <span
+            className={`font-medium whitespace-nowrap transition-all duration-300 ${!sidebarOpen ? "lg:hidden lg:opacity-0" : "opacity-100"}`}
+          >
             Reports
           </span>
-          
+
           {/* Tooltip for collapsed state */}
           {!sidebarOpen && (
             <div className="hidden lg:block absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap pointer-events-none">
@@ -109,14 +129,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         </Link>
 
         <Link to="/blacklist" className={navItemClass("blacklist")}>
-          <Ban className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`} />
-          
-          <span className={`font-medium whitespace-nowrap transition-all duration-300 ${!sidebarOpen ? "lg:hidden lg:opacity-0" : "opacity-100"}`}>
+          <Ban
+            className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`}
+          />
+
+          <span
+            className={`font-medium whitespace-nowrap transition-all duration-300 ${!sidebarOpen ? "lg:hidden lg:opacity-0" : "opacity-100"}`}
+          >
             Blacklist
           </span>
 
           {!sidebarOpen && (
-             <div className="hidden lg:block absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap pointer-events-none">
+            <div className="hidden lg:block absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap pointer-events-none">
               Blacklist
             </div>
           )}
@@ -130,7 +154,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           className={`w-full flex items-center gap-3 px-3 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors ${!sidebarOpen && "lg:justify-center"}`}
           title={!sidebarOpen ? "Logout" : ""}
         >
-          <LogOut className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`} />
+          <LogOut
+            className={`w-5 h-5 shrink-0 ${!sidebarOpen && "lg:w-6 lg:h-6"}`}
+          />
           {sidebarOpen && (
             <span className="font-medium whitespace-nowrap animate-in fade-in">
               Logout
