@@ -7,8 +7,6 @@ A robust browser extension engineered to proactively detect and protect users fr
 ![Stars](https://img.shields.io/github/stars/glenjaysondmello/phishguard-extension?style=social)
 ![Forks](https://img.shields.io/github/forks/glenjaysondmello/phishguard-extension?style=social)
 
-![PhishGuard Extension Preview](/preview_example.png)
-
 ## ✨ Features
 
 *   **✨ Real-time Phishing Detection:** Utilizes advanced algorithms to analyze URLs and page content, identifying malicious patterns on the fly to safeguard your browsing.
@@ -18,6 +16,32 @@ A robust browser extension engineered to proactively detect and protect users fr
 *   **🔔 Customizable Alert System:** Notifies users immediately upon encountering a potential phishing threat, with options to customize alert preferences and severity.
 *   **🌐 Multi-language Support:** Increases accessibility and user trust by offering a localized interface and real-time alerts in English, Hindi, and Kannada, catering to a diverse range of users.
 
+## 🛠️ Tech Stack
+
+### Browser Extension
+
+* React
+* TypeScript
+* Redux
+* WebExtensions API (Firefox)
+* i18next (internationalization)
+
+### Admin Dashboard
+
+* React
+* TypeScript
+* Redux
+* Vite
+* Tailwind CSS
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* JWT Authentication
+* REST APIs
+  
 ## 🚀 Installation Guide
 
 To get PhishGuard Extension up and running, you'll need to set up the backend, admin dashboard, and the browser extension.
@@ -44,8 +68,8 @@ Ensure you have the following installed:
 
     ```bash
     cd backend
-    npm install # or yarn install
-    npm start   # or yarn start
+    npm install
+    npm start
     ```
     The backend server should now be running, typically on `http://localhost:3000` (check backend logs for exact port).
 
@@ -54,8 +78,8 @@ Ensure you have the following installed:
 
     ```bash
     cd ../admin-dashboard
-    npm install # or yarn install
-    npm run dev   # or yarn start
+    npm install
+    npm run dev
     ```
     The admin dashboard will usually be accessible at `http://localhost:5173` (or similar, check console output).
 
@@ -64,8 +88,8 @@ Ensure you have the following installed:
 
     ```bash
     cd ../extension
-    npm install # or yarn install
-    npm run build # or yarn build
+    npm install
+    npm run build
     ```
 
     After building, load the extension into your browser:
@@ -119,8 +143,6 @@ Once installed, the PhishGuard extension operates silently in the background.
 *   **Browsing:** When you navigate to a webpage, the extension will analyze its content and URL.
 *   **Alerts:** If a potential phishing threat is detected, the extension icon will change (e.g., turn red) and a notification will appear, warning you about the suspicious site.
 *   **Details:** Click on the extension icon to view more details about the current page's safety status or to manage extension settings.
-
-![Extension UI Placeholder](/extension_ui_placeholder.png)
 
 ### Admin Dashboard
 
@@ -178,7 +200,7 @@ We welcome contributions to PhishGuard Extension! To ensure a smooth collaborati
 6.  **Testing Requirements:**
     *   Write unit and/or integration tests for new features and bug fixes.
     *   Ensure all existing tests pass before submitting your PR.
-    *   Run tests using `npm test` (or `yarn test`) in the respective project directories.
+    *   Run tests using `npm test` in the respective project directories.
 
 ## 📜 License Information
 
